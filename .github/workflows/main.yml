@@ -22,7 +22,7 @@ jobs:
           git config --global --add safe.directory /github/home/.cache/pip
           git config --global --add safe.directory $PWD
           echo "INDEX_MODE=redirect" >> $GITHUB_ENV
-          echo "SUBDOMAIN=docs" >> $GITHUB_ENV
+          echo "SUBDOMAIN=testnet" >> $GITHUB_ENV
           echo "DNS=kira.network" >> $GITHUB_ENV
           echo "USERNAME=KiraCore" >> $GITHUB_ENV
           echo "SOURCE_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
