@@ -52,6 +52,7 @@ jobs:
           python-version: 3.10.0
       - name: Install Loconotion & Build
         run: |
+          set -x
           cd ./loconotion
           pip install -r ./requirements.txt
           rm -rfv ./dist "${{env.DISTRO}}" "${{env.RELEASE}}"
@@ -64,20 +65,39 @@ jobs:
           cp -fv ../_site/LICENSE.md "${{env.RELEASE}}/LICENSE.md"
           cp -fv ../_site/${INDEX_MODE}.html "${{env.RELEASE}}/index.html"
           ls -a1 ../_site
+          bu echoInfo "INFO: Distro catalog files: "
           ls -a1 "${{env.DISTRO}}"
+          bu echoInfo "INFO: Release catalog files: "
           ls -a1 "${{env.RELEASE}}"
       - name: Publish HTML to IPFS
         shell: bash
         run: |
           set -x
+          bu timerStart "pin-timeout"
+          IPFS_HASH=""
           IPFS_UPLOAD_NAME="www-${{env.SUBDOMAIN}}.${{env.DNS}}-${{env.SOURCE_BRANCH}}-${{env.VERSION}}"
-          ipfs-api pin "${{env.DISTRO}}" $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true --force=true | tee -a ./ipfs-pin.log || echo "ERROR: Failed to pin web app"
-          IPFS_HASH=$(cat ./ipfs-pin.log | tail -n 1 | bash-utils jsonParse ".hash" || echo "")
-          [ -z "$IPFS_HASH" ] && echo "ERROR: IPFS Upload Failed" && exit 1
+          CHECK_ELAPSED=0
+          while [[ $CHECK_ELAPSED -lt 300 ]] ; do
+
+            bu echoInfo "INFO: Attempting fils pin to IPFS, timeout in ${CHECK_ELAPSED}/900s..."
+            rm ./ipfs-pin.log && touch ./ipfs-pin.log
+            ipfs-api pin "${{env.DISTRO}}" $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true --force=true | tee -a ./ipfs-pin.log || ( bu echoErr "ERROR: Failed to pin web app" && exit 1 )
+          
+            bu echoInfo "INFO: Attempting to read the CID..."
+            rm ./ipfs-pinned.log && touch ./ipfs-pinned.log
+            ipfs-api pinned $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true | tee -a ./ipfs-pinned.log || bu echoErr "ERROR: Failed to find pinned files"
+            IPFS_HASH=$(cat ./ipfs-pinned.log | tail -n 1 | bu jsonParse "rows.[0].ipfs_pin_hash" || echo "")
+            cat ./ipfs-pinned.log || bu echoErr "ERROR: Failed to print pin check error logs"
+            [ ! -z "$IPFS_HASH" ] && break
+
+            sleep 10
+            CHECK_ELAPSED=$(bu timerSpan "pin-timeout")
+          done
+
+          [ -z "$IPFS_HASH" ] && bu echoErr "ERROR: IPFS Upload Failed" && exit 1
           echo "IPFS_HASH=$IPFS_HASH" >> $GITHUB_ENV
           IPFS_HASH_SHORT=${IPFS_HASH::10}...${IPFS_HASH: -3}
           echo "IPFS_HASH_SHORT=$IPFS_HASH_SHORT" >> $GITHUB_ENV
-          rm -fv ./ipfs-pin.log
       - name: Save changes to release folder
         run: |
           ZIP_FILENAME="${{env.SUBDOMAIN}}.${{env.DNS}}.zip"
