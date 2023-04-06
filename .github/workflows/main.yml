@@ -81,7 +81,7 @@ jobs:
 
             bu echoInfo "INFO: Attempting fils pin to IPFS, timeout in ${CHECK_ELAPSED}/900s..."
             rm -fv ./ipfs-pin.log && touch ./ipfs-pin.log
-            ipfs-api pin "${{env.DISTRO}}" $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true --force=true | tee -a ./ipfs-pin.log || bu echoWarn "WARNING: Failed to pin web app"
+            ipfs-api pin "${{env.DISTRO}}" $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true --overwrite=true | tee -a ./ipfs-pin.log || bu echoWarn "WARNING: Failed to pin web app"
           
             bu echoInfo "INFO: Attempting to read the CID..."
             rm -fv ./ipfs-pinned.log && touch ./ipfs-pinned.log
