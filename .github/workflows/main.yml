@@ -80,12 +80,12 @@ jobs:
           while [[ $CHECK_ELAPSED -lt 300 ]] ; do
 
             bu echoInfo "INFO: Attempting fils pin to IPFS, timeout in ${CHECK_ELAPSED}/900s..."
-            rm ./ipfs-pin.log && touch ./ipfs-pin.log
-            ipfs-api pin "${{env.DISTRO}}" $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true --force=true | tee -a ./ipfs-pin.log || ( bu echoErr "ERROR: Failed to pin web app" && exit 1 )
+            rm -fv ./ipfs-pin.log && touch ./ipfs-pin.log
+            ipfs-api pin "${{env.DISTRO}}" $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true --force=true | tee -a ./ipfs-pin.log || bu echoWarn "WARNING: Failed to pin web app"
           
             bu echoInfo "INFO: Attempting to read the CID..."
-            rm ./ipfs-pinned.log && touch ./ipfs-pinned.log
-            ipfs-api pinned $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true | tee -a ./ipfs-pinned.log || bu echoErr "ERROR: Failed to find pinned files"
+            rm -fv ./ipfs-pinned.log && touch ./ipfs-pinned.log
+            ipfs-api pinned $IPFS_UPLOAD_NAME --key=${{secrets.PINATA_API_JWT}} --verbose=true | tee -a ./ipfs-pinned.log || bu echoWarn "WARNING: Failed to find pinned files"
             IPFS_HASH=$(cat ./ipfs-pinned.log | tail -n 1 | bu jsonParse "rows.[0].ipfs_pin_hash" || echo "")
             cat ./ipfs-pinned.log || bu echoErr "ERROR: Failed to print pin check error logs"
             [ ! -z "$IPFS_HASH" ] && break
