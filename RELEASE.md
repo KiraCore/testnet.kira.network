@@ -1,2 +1,2 @@
 #### Features
-* First release of automated testnet docs
+* Add chaosnet-1 init setup data
