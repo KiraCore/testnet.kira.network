@@ -1,2 +1,2 @@
 #### Features
-* Add chaosnet-1 init setup data
+* Updated the table of validators
