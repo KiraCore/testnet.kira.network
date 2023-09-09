@@ -19,7 +19,7 @@ async function main() {
   var sleepPromise = sleep(4000)
 
   console.info("INFO: Setting up load balancing...")
-  var cid = "bafybeiemj5tlq56m4be3xbsh7whkpmplpfe5r6yvyo7zoz7pgy4fyudm4y"
+  var cid = "bafybeibj43t4r4zor3gsdoymo5w2ffiq7ninpklvhgvxuydkzsvppg4khu"
 
   // Choose random gateway to distribute the traffic
   var gateways = [
@@ -45,7 +45,7 @@ async function main() {
     document.getElementById('vid-404').style.display = ''
  
     console.error("ERROR: We were not able to find the app")
-    console.info("INFO: Visit following github page to find latest release: https://github.com/KiraCore/testnet.kira.network/releases/tag/v0.0.4")
+    console.info("INFO: Visit following github page to find latest release: https://github.com/KiraCore/testnet.kira.network/releases/tag/v0.0.5")
   }
 
   console.info("INFO: Page loader finished")
@@ -86,10 +86,10 @@ main();
   <div>
     <div  id="div-error" style="width: 768px; display: none;">
       
-      <span><b>CID: bafybeiemj5tlq56m4be3xbsh7whkpmplpfe5r6yvyo7zoz7pgy4fyudm4y</b><br><br></span>
+      <span><b>CID: bafybeibj43t4r4zor3gsdoymo5w2ffiq7ninpklvhgvxuydkzsvppg4khu</b><br><br></span>
 
       <span>The IPFS gateway is currently not available, please visit our </span>
-      <a id="rel-link" href="https://github.com/KiraCore/testnet.kira.network/releases/tag/v0.0.4"><span><strong>GitHub repository</strong></span></a>&nbsp
+      <a id="rel-link" href="https://github.com/KiraCore/testnet.kira.network/releases/tag/v0.0.5"><span><strong>GitHub repository</strong></span></a>&nbsp
       <span>
         where you can download latest release, alternatively copy above CID and try another 
         <a id="rel-link" href="https://ipfs.github.io/public-gateway-checker/"><span><strong>public gateway</strong></span></a>
