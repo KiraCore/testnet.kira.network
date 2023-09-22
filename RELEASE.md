@@ -1,2 +1,2 @@
 #### Features
-* Updated the table of validators
+* Table of validators update
