@@ -1,2 +1,2 @@
 #### Features
-* Icons update from color to full black
+* Validator table update
